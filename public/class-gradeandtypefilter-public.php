@@ -146,6 +146,16 @@ class Gradeandtypefilter_Public
 		echo apply_filters('ld_gradecategorydropdown', $gradecategorydropdown, $atts);
 		echo apply_filters('ld_typedropdown', $typedropdown, $atts);
 		echo '</div>';
+		$query_args = $this->modify_course_list_query_args(array(), $atts);
+        $courses = new WP_Query($query_args);
+
+		if (!empty($_GET['gradecat']) || !empty($_GET['typecat'])) {
+        if (!($courses->have_posts())) {
+            echo '<h3 style="padding-left:50px">No courses available.</h3>';
+        }
+	}
+		
+
 		wp_reset_postdata();
 
 		return ob_get_clean();
