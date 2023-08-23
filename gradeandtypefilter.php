@@ -66,6 +66,7 @@ register_deactivation_hook(__FILE__, 'deactivate_gradeandtypefilter');
  */
 require plugin_dir_path(__FILE__) . 'includes/class-gradeandtypefilter.php';
 
+
 /**
  * Begins execution of the plugin.
  *
@@ -85,25 +86,17 @@ run_gradeandtypefilter();
 
 
 require_once(plugin_dir_path(__FILE__) . 'includes/class-gradeandtypefilter-taxonomy.php');
-require_once(plugin_dir_path(__FILE__) . 'includes/class-gradeandtypefilter-querymodifier.php');
-require_once(plugin_dir_path(__FILE__) . 'includes/class-gradeandtypefilter-shortcode.php');
 
 class GradeandTypeFilter_Plugin
 {
 	private $taxonomy_var;
-	private $query_modifier_var;
-	private $shortcode_var;
+
 
 	public function __construct()
 	{
 		$this->taxonomy_var = new GradeAndTypeFilter_Taxonomy();
-		$this->query_modifier_var = new GradeAndTypeFilter_QueryModifier();
-		$this->shortcode_var = new GradeAndTypeFilter_Shortcode();
-
 		add_action('init', array($this->taxonomy_var, 'register_taxonomies'));
-		add_filter('learndash_ld_course_list_query_args', array($this->query_modifier_var, 'modify_course_list_query_args'), 10, 2);
-		add_shortcode('gradecategory_filter_courses', array($this->shortcode_var, 'grade_type_filter_shortcode'));
-	}
+	}	
 }
 
 new GradeandTypeFilter_Plugin();

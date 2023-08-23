@@ -20,7 +20,8 @@
  * @subpackage Gradeandtypefilter/public
  * @author     Sumeet Dubey <sumeet.dubey@wisdmlabs.com>
  */
-class Gradeandtypefilter_Public {
+class Gradeandtypefilter_Public
+{
 
 	/**
 	 * The ID of this plugin.
@@ -47,11 +48,13 @@ class Gradeandtypefilter_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct($plugin_name, $version)
+	{
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
+		add_shortcode('gradecategory_filter_courses', array($this, 'grade_type_filter_shortcode'));
+		add_filter('learndash_ld_course_list_query_args', array($this, 'modify_course_list_query_args'), 10, 2);
 	}
 
 	/**
@@ -59,7 +62,8 @@ class Gradeandtypefilter_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -73,8 +77,7 @@ class Gradeandtypefilter_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/gradeandtypefilter-public.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/gradeandtypefilter-public.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -82,7 +85,8 @@ class Gradeandtypefilter_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -96,8 +100,88 @@ class Gradeandtypefilter_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/gradeandtypefilter-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/gradeandtypefilter-public.js', array('jquery'), $this->version, false);
+	}
+	public function grade_type_filter_shortcode($atts)
+	{
+		ob_start();
 
+		$gradecategories = get_terms(array(
+			'taxonomy' => 'grade',
+			'hide_empty' => true,
+		));
+
+		$types = get_terms(array(
+			'taxonomy' => 'type',
+			'hide_empty' => true,
+		));
+
+
+		echo '<div class="parent">';
+		$gradecategorydropdown = '<div id="ld_gradecategorydropdown" class="child">';
+		$gradecategorydropdown .= '<form method="get">
+            <label for="ld_gradecategorydropdown_select">Grades</label>
+            <select id="ld_gradecategorydropdown_select" name="gradecat" onchange="this.form.submit()">
+                <option value="">Select Grade</option>';
+
+		foreach ($gradecategories as $grade) {
+			$selected = (isset($_GET['gradecat']) && $_GET['gradecat'] == $grade->term_id) ? 'selected' : '';
+			$gradecategorydropdown .= '<option value="' . $grade->term_id . '" ' . $selected . '>' . $grade->name . '</option>';
+		}
+		$gradecategorydropdown .= '</select><input type="submit" style="display:none"></div>';
+
+		$typedropdown = '<div id="ld_typedropdown" class="child">';
+		$typedropdown .= '
+            <label for="ld_typedropdown_select">Types</label>
+            <select id="ld_typedropdown_select" name="typecat" onchange="this.form.submit()">
+                <option value="">Select Type</option>';
+
+		foreach ($types as $type) {
+			$selected = (isset($_GET['typecat']) && $_GET['typecat'] == $type->term_id) ? 'selected' : '';
+			$typedropdown .= '<option value="' . $type->term_id . '" ' . $selected . '>' . $type->name . '</option>';
+		}
+
+		$typedropdown .= '</select><input type="submit" style="display:none"></form></div>';
+
+		echo apply_filters('ld_gradecategorydropdown', $gradecategorydropdown, $atts);
+		echo apply_filters('ld_typedropdown', $typedropdown, $atts);
+		echo '</div>';
+		wp_reset_postdata();
+
+		return ob_get_clean();
 	}
 
+
+	public function modify_course_list_query_args($filter, $atts)
+	{
+
+		$tax_query = array();
+
+		if (isset($_GET['gradecat']) && !empty($_GET['gradecat'])) {
+			$tax_query[] = array(
+				'taxonomy' => 'grade',
+				'field'    => 'term_id',
+				'terms'    => intval($_GET['gradecat']),
+			);
+		}
+
+		if (isset($_GET['typecat']) && !empty($_GET['typecat'])) {
+			$tax_query[] = array(
+				'taxonomy' => 'type',
+				'field'    => 'term_id',
+				'terms'    => intval($_GET['typecat']),
+			);
+		}
+
+
+		if (count($tax_query) > 1) {
+			$tax_query['relation'] = 'AND';
+		}
+
+		if (!empty($tax_query)) {
+			$filter['tax_query'] = $tax_query;
+		}
+
+		return $filter;
+	}
 }

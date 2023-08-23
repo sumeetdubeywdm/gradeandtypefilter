@@ -51,6 +51,7 @@ class Gradeandtypefilter_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		
 
 	}
 
@@ -99,5 +100,6 @@ class Gradeandtypefilter_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/gradeandtypefilter-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+	
 
 }
