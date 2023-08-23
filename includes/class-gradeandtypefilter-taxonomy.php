@@ -31,14 +31,14 @@ class GradeAndTypeFilter_Taxonomy {
 
         $labels = array(
             'name'              => _x( 'Types', 'taxonomy general name' ),
-            'singular_name'     => _x( 'Type', 'taxonomy singular name' ),
+            'singular_name'     => _x( 'Types', 'taxonomy singular name' ),
             'search_items'      => __( 'Search Types' ),
             'all_items'         => __( 'All Types' ),
-            'parent_item'       => __( 'Parent Type' ),
-            'parent_item_colon' => __( 'Parent Type:' ),
-            'edit_item'         => __( 'Edit Type' ),
+            'parent_item'       => __( 'Parent Types' ),
+            'parent_item_colon' => __( 'Parent Types:' ),
+            'edit_item'         => __( 'Edit Types' ),
             'update_item'       => __( 'Update Type' ),
-            'add_new_item'      => __( 'Add New Type' ),
+            'add_new_item'      => __( 'Add New Types' ),
             'new_item_name'     => __( 'New Type Name' ),
             'menu_name'         => __( 'Types' ),
         );
@@ -50,9 +50,10 @@ class GradeAndTypeFilter_Taxonomy {
             'show_in_rest'          => true,
             'show_admin_column' => true,
             'query_var'         => true,
-            'rewrite'           => array( 'slug' => 'type' ),
+            'rewrite'           => array( 'slug' => 'types' ),
         );
     
-        register_taxonomy( 'type', array( 'post' , 'sfwd-courses'), $args );
+        register_taxonomy( 'types', array( 'post' , 'sfwd-courses'), $args );
     }
 }
+

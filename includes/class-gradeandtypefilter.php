@@ -79,6 +79,7 @@ class Gradeandtypefilter {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		
+
 	}
 
 	/**
@@ -214,5 +215,7 @@ class Gradeandtypefilter {
 	public function get_version() {
 		return $this->version;
 	}
+
+	
 
 }

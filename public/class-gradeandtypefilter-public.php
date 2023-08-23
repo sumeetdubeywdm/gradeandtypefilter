@@ -112,7 +112,7 @@ class Gradeandtypefilter_Public
 		));
 
 		$types = get_terms(array(
-			'taxonomy' => 'type',
+			'taxonomy' => 'types',
 			'hide_empty' => true,
 		));
 
@@ -167,7 +167,7 @@ class Gradeandtypefilter_Public
 
 		if (isset($_GET['typecat']) && !empty($_GET['typecat'])) {
 			$tax_query[] = array(
-				'taxonomy' => 'type',
+				'taxonomy' => 'types',
 				'field'    => 'term_id',
 				'terms'    => intval($_GET['typecat']),
 			);
@@ -184,4 +184,6 @@ class Gradeandtypefilter_Public
 
 		return $filter;
 	}
+
+
 }

@@ -95,8 +95,33 @@ class GradeandTypeFilter_Plugin
 	public function __construct()
 	{
 		$this->taxonomy_var = new GradeAndTypeFilter_Taxonomy();
+
+
 		add_action('init', array($this->taxonomy_var, 'register_taxonomies'));
-	}	
+		add_action('init', array($this, 'check_gradeandfilter_dependency'));
+	}
+
+	public function check_gradeandfilter_dependency()
+	{
+		$missing_plugins = array();
+
+		if (!is_plugin_active('learndash-learndash-course-grid-ba4894b1408a/learndash_course_grid.php')) {
+			$missing_plugins[] = 'LearnDash Course Grid';
+		}
+
+		if (!is_plugin_active('sfwd-lms/sfwd_lms.php')) {
+			$missing_plugins[] = 'LearnDash';
+		}
+
+		if (!empty($missing_plugins)) {
+			deactivate_plugins(plugin_basename(__FILE__));
+			add_action('admin_notices', function () use ($missing_plugins) {
+				echo '<div class="notice notice-error">';
+				echo '<p><strong>GradeandTypeFilter Plugin:</strong> ' . implode(', ', $missing_plugins) .' plugin is required.' .  '.</p>';
+				echo '</div>';
+			});
+		}
+	}
 }
 
 new GradeandTypeFilter_Plugin();
